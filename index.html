@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				
+			}
+			
+			img{
+				width:200px;
+				height:200px;
+			}
+			.the_box{
+				width: 630px;
+				height: 630px;
+				cursor: url(img/favicon.ico),auto;
+				border: 1px solid red;
+				box-shadow: 5px 5px 10px ;
+				transform:rotateX(45deg);
+			}
+			
+			li{
+				float: left;
+				list-style: none;
+				margin: 5px 5px 5px 5px;
+				border-radius: 50%;
+				transform:rotateX(45deg);
+				box-shadow: 5px 5px 10px ;
+				width:200px;
+				height:200px;
+				border: 0px;
+				background:#00ff33;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<p id="content">
+		<input type="button" class="start" value="开始游戏"/>
+		<input type="button" class="end" value="结束游戏"/>
+		<form name="form1" id="form1">
+			<span>分数：</span>
+			<input type="text" class="score" size="5" value="">
+			<span>倒计时：</span>
+			<input type="text" class="remtime" size="5" value="">
+		</form> 
+		
+		<div class="the_box">
+			<ul>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+		</div>
+	</body>
+	<script src="js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function(){
+			var playing = false,  //游戏是否开始
+			score = 0, //分数
+			noton=0,
+			countDown = 10, //倒计时
+			interId = null, //指定 setInterval()的变量
+			timeId = null; //指定 setTimeout()的变量
+			
+			//游戏开始
+			$(".start").click(function(){
+				playing = true;
+				interId = setInterval(show,1500); 
+				$(".score").val(score);
+				timeId = setTimeout(timeShow,1000);
+			})
+			
+			
+			 //随机循环显示老鼠图片
+			function show(){
+				var index=Math.floor(Math.random()*9);
+				var $img=$('<img  src="img/地鼠.jpg"/>');
+				$("li").eq(index).html($img).siblings().html("");
+			}	 
+
+		 //点击事件函数，判断是否点中老鼠
+			$("li").click(function(){
+				var th_index=$(this).index();
+				
+				if(playing == false){
+					alert("请点击开始游戏!");
+					return;
+				}else{
+					if($("li").eq(th_index).html()!=""){
+						score += 1;
+						$(".score").val(score);
+						$("li").eq(th_index).html("");
+					}else{
+						$(".score").val(score);
+						noton++;
+						if (noton==3) {
+							GameOver();
+							noton=0;
+						}
+					}
+				}
+			})
+		
+			$(".end").click(function(){
+				GameOver();
+			})
+			function GameOver(){
+				
+				alert("游戏结束！\n 你获得的分数为："+score);
+				$("li").html("");
+				countDown=10;
+				playing = false;
+				clearInterval(interId);
+				clearTimeout(timeId);
+				score=0;
+				$(".score,.remtime").val("");
+			}
+			//显示当前倒计时所剩时间
+			
+		
+			function timeShow(){
+				var countDown2 = countDown--;
+				$(".remtime").val(countDown2)
+				console.log(countDown)
+				if(countDown2 == 0){
+					GameOver();
+					return;
+				}else{
+//					$(".remtime").val(countDown2)
+					timeId = setTimeout(timeShow,1000);
+				}
+			}
+		})
+	</script>
+</html>
